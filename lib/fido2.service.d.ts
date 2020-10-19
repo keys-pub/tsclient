@@ -1,7 +1,7 @@
 /// <reference types="node" />
 import { ServiceClient } from '@grpc/grpc-js/build/src/make-client';
 import { EventEmitter } from 'events';
-import * as fido2 from './fido2.d';
+import * as fido2 from './fido2';
 export declare type RPCError = {
     name: string;
     message: string;

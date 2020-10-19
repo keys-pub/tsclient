@@ -31,10 +31,8 @@ protoc \
   $protoc_include \
   --plugin="protoc-gen-tstypes=${tstypes_path}" \
   --tstypes_out=../src \
-  --tstypes_opt=declare_namespace=false,outpattern="{{.BaseName}}.d.ts" \
+  --tstypes_opt=declare_namespace=false,outpattern="{{.BaseName}}.ts" \
   keys.proto fido2.proto
-cp ../src/keys.d.ts ../lib/keys.d.ts
-cp ../src/fido2.d.ts ../lib/fido2.d.ts
 
 echo "protoc-gen-tsrpc"
 if [ ! -x "$(command -v protoc-gen-tsrpc)" ]; then

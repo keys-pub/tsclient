@@ -5,7 +5,7 @@ import {ServiceClient} from '@grpc/grpc-js/build/src/make-client'
 import {ClientDuplexStream} from '@grpc/grpc-js/build/src/call'
 import * as grpc from '@grpc/grpc-js'
 import {EventEmitter} from 'events'
-import * as fido2 from './fido2.d'
+import * as fido2 from './fido2'
 
 export type RPCError = {
   name: string

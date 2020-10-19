@@ -2,7 +2,7 @@
 import { ServiceClient } from '@grpc/grpc-js/build/src/make-client';
 import { ClientDuplexStream } from '@grpc/grpc-js/build/src/call';
 import { EventEmitter } from 'events';
-import * as keys from './keys.d';
+import * as keys from './keys';
 export declare type RPCError = {
     name: string;
     message: string;
