@@ -1,17 +1,14 @@
+import * as grpc from '@grpc/grpc-js';
+import { ClientDuplexStream } from '@grpc/grpc-js/build/src/call';
+import { appDir, certPath } from './env';
 import { ServiceClient } from '@grpc/grpc-js/build/src/make-client';
-declare class Client {
-    appDir: string;
-    port: number;
-    authToken: string;
-    keysClient?: ServiceClient;
-    fido2Client?: ServiceClient;
-    constructor(appDir: string, port: number);
-    setAuthToken(authToken: string): void;
-    close(): void;
-    keys(): ServiceClient | undefined;
-    auth(): ServiceClient | undefined;
-    rpc(name: string): ServiceClient | undefined;
-    private creds;
-    private newClient;
+import { KeysService, RPCError } from './keys.service';
+import { FIDO2Service } from './fido2.service';
+declare class Auth {
+    token: string;
+    constructor();
 }
-export { Client };
+export declare const credentials: (certPath: string, auth: Auth) => grpc.ChannelCredentials;
+declare const createKeysClient: (addr: string, credentials: grpc.ChannelCredentials) => KeysService;
+declare const createFIDO2Client: (addr: string, credentials: grpc.ChannelCredentials) => FIDO2Service;
+export { Auth, createKeysClient, createFIDO2Client, KeysService, FIDO2Service, ServiceClient, ClientDuplexStream, RPCError, appDir, certPath, };

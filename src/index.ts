@@ -1,111 +1,106 @@
 import * as grpc from '@grpc/grpc-js'
-import * as protoLoader from '@grpc/proto-loader'
+
+import * as fs from 'fs'
+
+import keysProto from './keys.proto'
+import fido2Proto from './fido2.proto'
+
+// TODO: Ask @grpc/proto-loader to export createPackageDefinition
+import {createPackageDefinition} from './proto-loader'
+
+import {ClientDuplexStream} from '@grpc/grpc-js/build/src/call'
+import {appDir, certPath} from './env'
 
 import {
   ServiceClient,
   ServiceClientConstructor,
   GrpcObject,
   ServiceDefinition,
+  PackageDefinition,
 } from '@grpc/grpc-js/build/src/make-client'
 
-import * as fs from 'fs'
-import * as path from 'path'
+import {rpc, Message, Method, Root, RPCImpl, RPCImplCallback} from 'protobufjs'
 
-type CallMetadataOptions = {service_url: string}
+import {KeysService, RPCError} from './keys.service'
+import {FIDO2Service} from './fido2.service'
 
-class Client {
-  appDir: string
-  port: number
-  authToken: string
-  keysClient?: ServiceClient
-  fido2Client?: ServiceClient
+class Auth {
+  token: string
 
-  constructor(appDir: string, port: number) {
-    this.appDir = appDir
-    this.port = port
-    this.authToken = ''
-  }
-
-  setAuthToken(authToken: string) {
-    this.authToken = authToken
-  }
-
-  close() {
-    if (this.keysClient) {
-      this.keysClient.close()
-      this.keysClient = undefined
-    }
-    if (this.fido2Client) {
-      this.fido2Client.close()
-      this.fido2Client = undefined
-    }
-  }
-
-  keys(): ServiceClient | undefined {
-    if (!this.keysClient) {
-      this.keysClient = this.newClient(path.join('keys.pub', __dirname, 'keys.proto'), 'service', 'Keys')
-    }
-    return this.keysClient
-  }
-
-  auth(): ServiceClient | undefined {
-    if (!this.fido2Client) {
-      this.fido2Client = this.newClient(path.join('keys.pub', __dirname, 'fido2.proto'), 'fido2', 'Auth')
-    }
-    return this.fido2Client
-  }
-
-  rpc(name: string): ServiceClient | undefined {
-    switch (name) {
-      case 'Keys':
-        return this.keys()
-      case 'Auth':
-        return this.auth()
-    }
-    return undefined
-  }
-
-  private creds(): any {
-    const certPath = path.join(this.appDir, 'ca.pem')
-    console.log('Loading cert', certPath)
-    const cert = fs.readFileSync(certPath, 'ascii')
-    // console.log('Using cert:', cert)
-
-    const auth = (
-      options: CallMetadataOptions,
-      cb: (err: Error | null, metadata?: grpc.Metadata) => void
-    ) => {
-      const metadata = new grpc.Metadata()
-      metadata.set('authorization', this.authToken)
-      cb(null, metadata)
-    }
-
-    const callCreds = grpc.credentials.createFromMetadataGenerator(auth)
-    const sslCreds = grpc.credentials.createSsl(Buffer.from(cert, 'ascii'))
-    const creds = grpc.credentials.combineChannelCredentials(sslCreds, callCreds)
-    return creds
-  }
-
-  private newClient(protoPath: string, packageName: string, serviceName: string): ServiceClient {
-    // console.log('Proto path:', protoPath)
-    // console.log('Proto path (resolved):', path.resolve(protoPath))
-    const packageDefinition = protoLoader.loadSync(protoPath, {arrays: true, enums: String, defaults: true})
-    const protoDescriptor: GrpcObject = grpc.loadPackageDefinition(packageDefinition)
-    if (!protoDescriptor[packageName]) {
-      throw new Error('proto descriptor should have package ' + packageName)
-    }
-
-    const services = protoDescriptor[packageName] as GrpcObject
-
-    const serviceCls: ServiceClientConstructor = services[serviceName] as ServiceClientConstructor
-    if (typeof serviceCls !== 'function') {
-      throw new Error('proto descriptor missing ' + serviceName)
-    }
-
-    // console.log('Using client on port', this.port)
-    const cl = new serviceCls('localhost:' + this.port, this.creds())
-    return cl
+  constructor() {
+    this.token = ''
   }
 }
 
-export {Client}
+type CallMetadataOptions = {service_url: string}
+
+export const credentials = (certPath: string, auth: Auth): grpc.ChannelCredentials => {
+  const cert = fs.readFileSync(certPath, 'ascii')
+
+  const grpcAuth = (
+    options: CallMetadataOptions,
+    cb: (err: Error | null, metadata?: grpc.Metadata) => void
+  ) => {
+    const metadata = new grpc.Metadata()
+    metadata.set('authorization', auth.token)
+    cb(null, metadata)
+  }
+
+  const callCreds = grpc.credentials.createFromMetadataGenerator(grpcAuth)
+  const sslCreds = grpc.credentials.createSsl(Buffer.from(cert, 'ascii'))
+  const creds = grpc.credentials.combineChannelCredentials(sslCreds, callCreds)
+  return creds
+}
+
+const newClient = (
+  packageDefinition: PackageDefinition,
+  packageName: string,
+  serviceName: string
+): ServiceClientConstructor => {
+  const protoDescriptor: GrpcObject = grpc.loadPackageDefinition(packageDefinition)
+
+  if (!protoDescriptor[packageName]) {
+    throw new Error('proto descriptor should have package ' + packageName)
+  }
+  const services = protoDescriptor[packageName] as GrpcObject
+  const serviceCls: ServiceClientConstructor = services[serviceName] as ServiceClientConstructor
+  if (typeof serviceCls !== 'function') {
+    throw new Error('proto descriptor missing ' + serviceName)
+  }
+  return serviceCls
+}
+
+const createKeysClient = (addr: string, credentials: grpc.ChannelCredentials): KeysService => {
+  const packageDefinition: PackageDefinition = createPackageDefinition(keysProto as Root, {
+    arrays: true,
+    enums: String,
+    defaults: true,
+  })
+  const serviceCls = newClient(packageDefinition, 'keys', 'Keys')
+  const cl = new serviceCls(addr, credentials)
+  return new KeysService(cl)
+}
+
+const createFIDO2Client = (addr: string, credentials: grpc.ChannelCredentials): FIDO2Service => {
+  const packageDefinition: PackageDefinition = createPackageDefinition(fido2Proto as Root, {
+    arrays: true,
+    enums: String,
+    defaults: true,
+  })
+  const serviceCls = newClient(packageDefinition, 'fido2', 'FIDO2')
+  const cl = new serviceCls(addr, credentials)
+  return new FIDO2Service(cl)
+}
+
+export {
+  Auth,
+  createKeysClient,
+  createFIDO2Client,
+  KeysService,
+  FIDO2Service,
+  ServiceClient,
+  ClientDuplexStream,
+  RPCError,
+  appDir,
+  certPath,
+}
