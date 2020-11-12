@@ -23,3 +23,10 @@ creds.token = auth.authToken
 const search = await keys.Search({})
 console.log('Search:', search)
 ```
+
+## Publishing
+
+```shell
+npm login
+npm publish --access public
+```
