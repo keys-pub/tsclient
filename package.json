@@ -1,6 +1,6 @@
 {
   "name": "@keys-pub/tsclient",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Typescript client for keys.pub",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
