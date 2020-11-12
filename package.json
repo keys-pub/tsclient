@@ -8,7 +8,7 @@
   "author": "Gabriel Handford <gabrielh@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "tsc"
+    "build": "rimraf lib && ./proto/proto.sh && tsc"
   },
   "devDependencies": {
     "@types/getenv": "^1.0.0",

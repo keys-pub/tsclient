@@ -20,13 +20,6 @@ export declare enum ExportType {
     SALTPACK_EXPORT_TYPE = "SALTPACK_EXPORT_TYPE",
     SSH_EXPORT_TYPE = "SSH_EXPORT_TYPE"
 }
-export declare enum KeyType {
-    UNKNOWN_KEY_TYPE = "UNKNOWN_KEY_TYPE",
-    EDX25519 = "EDX25519",
-    EDX25519_PUBLIC = "EDX25519_PUBLIC",
-    X25519 = "X25519",
-    X25519_PUBLIC = "X25519_PUBLIC"
-}
 export declare enum SortDirection {
     ASC = "ASC",
     DESC = "DESC"
@@ -57,6 +50,10 @@ export declare enum UserStatus {
     USER_CONN_FAILURE = "USER_CONN_FAILURE",
     USER_FAILURE = "USER_FAILURE"
 }
+export declare enum ContentType {
+    BINARY_CONTENT = "BINARY_CONTENT",
+    UTF8_CONTENT = "UTF8_CONTENT"
+}
 export declare enum WormholeStatus {
     WORMHOLE_DEFAULT = "WORMHOLE_DEFAULT",
     WORMHOLE_STARTING = "WORMHOLE_STARTING",
@@ -66,14 +63,10 @@ export declare enum WormholeStatus {
     WORMHOLE_CONNECTED = "WORMHOLE_CONNECTED",
     WORMHOLE_CLOSED = "WORMHOLE_CLOSED"
 }
-export declare enum ContentType {
-    BINARY_CONTENT = "BINARY_CONTENT",
-    UTF8_CONTENT = "UTF8_CONTENT"
-}
-export declare enum MessageType {
-    MESSAGE_SENT = "MESSAGE_SENT",
-    MESSAGE_PENDING = "MESSAGE_PENDING",
-    MESSAGE_ACK = "MESSAGE_ACK"
+export declare enum WormholeMessageType {
+    WORMHOLE_MESSAGE_SENT = "WORMHOLE_MESSAGE_SENT",
+    WORMHOLE_MESSAGE_PENDING = "WORMHOLE_MESSAGE_PENDING",
+    WORMHOLE_MESSAGE_ACK = "WORMHOLE_MESSAGE_ACK"
 }
 export interface SignRequest {
     data?: Uint8Array;
@@ -330,7 +323,7 @@ export interface AuthRecoverResponse {
     authToken?: string;
 }
 export interface KeyGenerateRequest {
-    type?: KeyType;
+    type?: string;
 }
 export interface KeyGenerateResponse {
     kid?: string;
@@ -386,7 +379,7 @@ export interface KeyRemoveResponse {
 }
 export interface Key {
     id?: string;
-    type?: KeyType;
+    type?: string;
     user?: User;
     saved?: boolean;
     sigchainLength?: number;
@@ -402,7 +395,7 @@ export interface KeyResponse {
 }
 export interface KeysRequest {
     query?: string;
-    types?: Array<KeyType>;
+    types?: Array<string>;
     sortField?: string;
     sortDirection?: SortDirection;
 }
@@ -563,27 +556,11 @@ export interface VaultUpdateRequest {
 }
 export interface VaultUpdateResponse {
 }
-export interface WormholeInput {
-    sender?: string;
-    recipient?: string;
-    invite?: string;
-    id?: string;
-    data?: Uint8Array;
-    type?: ContentType;
-}
-export interface WormholeOutput {
-    message?: Message;
-    status?: WormholeStatus;
-}
 export interface Message {
     id?: string;
     sender?: Key;
-    recipient?: Key;
-    type?: MessageType;
     content?: Content;
     createdAt?: number;
-    timeDisplay?: string;
-    dateDisplay?: string;
 }
 export interface Content {
     data?: Uint8Array;
@@ -591,7 +568,7 @@ export interface Content {
 }
 export interface MessagePrepareRequest {
     sender?: string;
-    recipient?: string;
+    channel?: string;
     text?: string;
 }
 export interface MessagePrepareResponse {
@@ -599,18 +576,48 @@ export interface MessagePrepareResponse {
 }
 export interface MessageCreateRequest {
     sender?: string;
-    recipient?: string;
+    channel?: string;
     text?: string;
 }
 export interface MessageCreateResponse {
     message?: Message;
 }
 export interface MessagesRequest {
-    sender?: string;
-    recipient?: string;
+    channel?: string;
+    member?: string;
 }
 export interface MessagesResponse {
     messages?: Array<Message>;
+}
+export interface Channel {
+    id?: string;
+    name?: string;
+}
+export interface ChannelsRequest {
+    member?: string;
+}
+export interface ChannelsResponse {
+    channels?: Array<Channel>;
+}
+export interface ChannelCreateRequest {
+    name?: string;
+    member?: string;
+}
+export interface ChannelCreateResponse {
+    channel?: Channel;
+}
+export interface ChannelInviteCreateRequest {
+    channel?: string;
+    recipient?: string;
+    sender?: string;
+}
+export interface ChannelInviteCreateResponse {
+}
+export interface ChannelInviteAcceptRequest {
+    channel?: string;
+    member?: string;
+}
+export interface ChannelInviteAcceptResponse {
 }
 export interface AdminSignURLRequest {
     signer?: string;
@@ -658,6 +665,31 @@ export interface ConfigSetRequest {
     config?: Config;
 }
 export interface ConfigSetResponse {
+}
+export interface RelayInput {
+}
+export interface RelayOutput {
+    kid?: string;
+}
+export interface WormholeInput {
+    sender?: string;
+    recipient?: string;
+    invite?: string;
+    id?: string;
+    data?: Uint8Array;
+    type?: ContentType;
+}
+export interface WormholeMessage {
+    id?: string;
+    sender?: Key;
+    recipient?: Key;
+    type?: WormholeMessageType;
+    content?: Content;
+    createdAt?: number;
+}
+export interface WormholeOutput {
+    message?: WormholeMessage;
+    status?: WormholeStatus;
 }
 export interface KeysService {
     KeyGenerate: (r: KeyGenerateRequest) => KeyGenerateResponse;
@@ -781,9 +813,20 @@ export interface KeysService {
     DocumentDelete: (r: DocumentDeleteRequest) => DocumentDeleteResponse;
     ConfigGet: (r: ConfigGetRequest) => ConfigGetResponse;
     ConfigSet: (r: ConfigSetRequest) => ConfigSetResponse;
-    AdminSignURL: (r: AdminSignURLRequest) => AdminSignURLResponse;
-    AdminCheck: (r: AdminCheckRequest) => AdminCheckResponse;
+    Channels: (r: ChannelsRequest) => ChannelsResponse;
+    ChannelCreate: (r: ChannelCreateRequest) => ChannelCreateResponse;
+    ChannelInviteCreate: (r: ChannelInviteCreateRequest) => ChannelInviteCreateResponse;
+    ChannelInviteAccept: (r: ChannelInviteAcceptRequest) => ChannelInviteAcceptResponse;
     MessagePrepare: (r: MessagePrepareRequest) => MessagePrepareResponse;
     MessageCreate: (r: MessageCreateRequest) => MessageCreateResponse;
     Messages: (r: MessagesRequest) => MessagesResponse;
+    AdminSignURL: (r: AdminSignURLRequest) => AdminSignURLResponse;
+    AdminCheck: (r: AdminCheckRequest) => AdminCheckResponse;
+    Relay: (r: () => {
+        value: RelayInput;
+        done: boolean;
+    }, cb: (a: {
+        value: RelayOutput;
+        done: boolean;
+    }) => void) => void;
 }

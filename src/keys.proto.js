@@ -274,13 +274,21 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             requestType: "ConfigSetRequest",
             responseType: "ConfigSetResponse"
           },
-          AdminSignURL: {
-            requestType: "AdminSignURLRequest",
-            responseType: "AdminSignURLResponse"
+          Channels: {
+            requestType: "ChannelsRequest",
+            responseType: "ChannelsResponse"
           },
-          AdminCheck: {
-            requestType: "AdminCheckRequest",
-            responseType: "AdminCheckResponse"
+          ChannelCreate: {
+            requestType: "ChannelCreateRequest",
+            responseType: "ChannelCreateResponse"
+          },
+          ChannelInviteCreate: {
+            requestType: "ChannelInviteCreateRequest",
+            responseType: "ChannelInviteCreateResponse"
+          },
+          ChannelInviteAccept: {
+            requestType: "ChannelInviteAcceptRequest",
+            responseType: "ChannelInviteAcceptResponse"
           },
           MessagePrepare: {
             requestType: "MessagePrepareRequest",
@@ -293,6 +301,20 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           Messages: {
             requestType: "MessagesRequest",
             responseType: "MessagesResponse"
+          },
+          AdminSignURL: {
+            requestType: "AdminSignURLRequest",
+            responseType: "AdminSignURLResponse"
+          },
+          AdminCheck: {
+            requestType: "AdminCheckRequest",
+            responseType: "AdminCheckResponse"
+          },
+          Relay: {
+            requestType: "RelayInput",
+            requestStream: true,
+            responseType: "RelayOutput",
+            responseStream: true
           }
         }
       },
@@ -1135,7 +1157,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
       KeyGenerateRequest: {
         fields: {
           type: {
-            type: "KeyType",
+            type: "string",
             id: 1
           }
         }
@@ -1329,18 +1351,6 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
       KeyRemoveResponse: {
         fields: {}
       },
-      KeyType: {
-        options: {
-          "(go.enum).name": "KeyType"
-        },
-        values: {
-          UNKNOWN_KEY_TYPE: 0,
-          EDX25519: 10,
-          EDX25519_PUBLIC: 11,
-          X25519: 20,
-          X25519_PUBLIC: 21
-        }
-      },
       Key: {
         fields: {
           id: {
@@ -1351,7 +1361,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             }
           },
           type: {
-            type: "KeyType",
+            type: "string",
             id: 3
           },
           user: {
@@ -1413,7 +1423,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           },
           types: {
             rule: "repeated",
-            type: "KeyType",
+            type: "string",
             id: 2
           },
           sortField: {
@@ -1966,63 +1976,6 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
       VaultUpdateResponse: {
         fields: {}
       },
-      WormholeInput: {
-        fields: {
-          sender: {
-            type: "string",
-            id: 1
-          },
-          recipient: {
-            type: "string",
-            id: 2
-          },
-          invite: {
-            type: "string",
-            id: 3
-          },
-          id: {
-            type: "string",
-            id: 10,
-            options: {
-              "(go.field).name": "ID"
-            }
-          },
-          data: {
-            type: "bytes",
-            id: 11
-          },
-          type: {
-            type: "ContentType",
-            id: 12
-          }
-        }
-      },
-      WormholeStatus: {
-        options: {
-          "(go.enum).name": "WormholeStatus"
-        },
-        values: {
-          WORMHOLE_DEFAULT: 0,
-          WORMHOLE_STARTING: 10,
-          WORMHOLE_OFFERING: 20,
-          WORMHOLE_ANSWERING: 21,
-          WORMHOLE_HANDSHAKE: 40,
-          WORMHOLE_CONNECTED: 100,
-          WORMHOLE_CLOSED: 200
-        }
-      },
-      WormholeOutput: {
-        fields: {
-          message: {
-            type: "Message",
-            id: 1
-          },
-          status: {
-            type: "WormholeStatus",
-            id: 2
-          }
-        }
-      },
       ContentType: {
         options: {
           "(go.enum).name": "ContentType"
@@ -2030,16 +1983,6 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
         values: {
           BINARY_CONTENT: 0,
           UTF8_CONTENT: 1
-        }
-      },
-      MessageType: {
-        options: {
-          "(go.enum).name": "MessageType"
-        },
-        values: {
-          MESSAGE_SENT: 0,
-          MESSAGE_PENDING: 1,
-          MESSAGE_ACK: 2
         }
       },
       Message: {
@@ -2055,14 +1998,6 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "Key",
             id: 2
           },
-          recipient: {
-            type: "Key",
-            id: 3
-          },
-          type: {
-            type: "MessageType",
-            id: 5
-          },
           content: {
             type: "Content",
             id: 10
@@ -2070,14 +2005,6 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           createdAt: {
             type: "int64",
             id: 21
-          },
-          timeDisplay: {
-            type: "string",
-            id: 31
-          },
-          dateDisplay: {
-            type: "string",
-            id: 32
           }
         }
       },
@@ -2099,7 +2026,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "string",
             id: 1
           },
-          recipient: {
+          channel: {
             type: "string",
             id: 2
           },
@@ -2123,7 +2050,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "string",
             id: 1
           },
-          recipient: {
+          channel: {
             type: "string",
             id: 2
           },
@@ -2143,11 +2070,11 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
       },
       MessagesRequest: {
         fields: {
-          sender: {
+          channel: {
             type: "string",
             id: 1
           },
-          recipient: {
+          member: {
             type: "string",
             id: 2
           }
@@ -2161,6 +2088,92 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 1
           }
         }
+      },
+      Channel: {
+        fields: {
+          id: {
+            type: "string",
+            id: 1,
+            options: {
+              "(go.field).name": "ID"
+            }
+          },
+          name: {
+            type: "string",
+            id: 2
+          }
+        }
+      },
+      ChannelsRequest: {
+        fields: {
+          member: {
+            type: "string",
+            id: 1
+          }
+        }
+      },
+      ChannelsResponse: {
+        fields: {
+          channels: {
+            rule: "repeated",
+            type: "Channel",
+            id: 1
+          }
+        }
+      },
+      ChannelCreateRequest: {
+        fields: {
+          name: {
+            type: "string",
+            id: 1
+          },
+          member: {
+            type: "string",
+            id: 2
+          }
+        }
+      },
+      ChannelCreateResponse: {
+        fields: {
+          channel: {
+            type: "Channel",
+            id: 1
+          }
+        }
+      },
+      ChannelInviteCreateRequest: {
+        fields: {
+          channel: {
+            type: "string",
+            id: 1
+          },
+          recipient: {
+            type: "string",
+            id: 2
+          },
+          sender: {
+            type: "string",
+            id: 3
+          }
+        }
+      },
+      ChannelInviteCreateResponse: {
+        fields: {}
+      },
+      ChannelInviteAcceptRequest: {
+        fields: {
+          channel: {
+            type: "string",
+            id: 1
+          },
+          member: {
+            type: "string",
+            id: 2
+          }
+        }
+      },
+      ChannelInviteAcceptResponse: {
+        fields: {}
       },
       AdminSignURLRequest: {
         fields: {
@@ -2312,6 +2325,118 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
       },
       ConfigSetResponse: {
         fields: {}
+      },
+      RelayInput: {
+        fields: {}
+      },
+      RelayOutput: {
+        fields: {
+          kid: {
+            type: "string",
+            id: 1,
+            options: {
+              "(go.field).name": "KID"
+            }
+          }
+        }
+      },
+      WormholeInput: {
+        fields: {
+          sender: {
+            type: "string",
+            id: 1
+          },
+          recipient: {
+            type: "string",
+            id: 2
+          },
+          invite: {
+            type: "string",
+            id: 3
+          },
+          id: {
+            type: "string",
+            id: 10,
+            options: {
+              "(go.field).name": "ID"
+            }
+          },
+          data: {
+            type: "bytes",
+            id: 11
+          },
+          type: {
+            type: "ContentType",
+            id: 12
+          }
+        }
+      },
+      WormholeStatus: {
+        options: {
+          "(go.enum).name": "WormholeStatus"
+        },
+        values: {
+          WORMHOLE_DEFAULT: 0,
+          WORMHOLE_STARTING: 10,
+          WORMHOLE_OFFERING: 20,
+          WORMHOLE_ANSWERING: 21,
+          WORMHOLE_HANDSHAKE: 40,
+          WORMHOLE_CONNECTED: 100,
+          WORMHOLE_CLOSED: 200
+        }
+      },
+      WormholeMessage: {
+        fields: {
+          id: {
+            type: "string",
+            id: 1,
+            options: {
+              "(go.field).name": "ID"
+            }
+          },
+          sender: {
+            type: "Key",
+            id: 2
+          },
+          recipient: {
+            type: "Key",
+            id: 3
+          },
+          type: {
+            type: "WormholeMessageType",
+            id: 5
+          },
+          content: {
+            type: "Content",
+            id: 10
+          },
+          createdAt: {
+            type: "int64",
+            id: 21
+          }
+        }
+      },
+      WormholeOutput: {
+        fields: {
+          message: {
+            type: "WormholeMessage",
+            id: 1
+          },
+          status: {
+            type: "WormholeStatus",
+            id: 2
+          }
+        }
+      },
+      WormholeMessageType: {
+        options: {
+          "(go.enum).name": "WormholeMessageType"
+        },
+        values: {
+          WORMHOLE_MESSAGE_SENT: 0,
+          WORMHOLE_MESSAGE_PENDING: 1,
+          WORMHOLE_MESSAGE_ACK: 2
+        }
       }
     }
   }

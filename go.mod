@@ -3,7 +3,7 @@ module github.com/keys-pub/tsclient
 go 1.15
 
 require (
-	github.com/alta/protopatch v0.0.0-20200702232458-c2bd0c612764 // indirect
+	github.com/alta/protopatch v0.0.0-20201016184603-76d4a1d79afd // indirect
 	github.com/golang/protobuf v1.4.3 // indirect
 	github.com/google/uuid v1.1.2 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.15.2 // indirect

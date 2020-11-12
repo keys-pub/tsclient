@@ -24,33 +24,35 @@ import {rpc, Message, Method, Root, RPCImpl, RPCImplCallback} from 'protobufjs'
 import {KeysService, RPCError} from './keys.service'
 import {FIDO2Service} from './fido2.service'
 
-class Auth {
+class Credentials {
   token: string
+  certPath: string
 
-  constructor() {
+  constructor(certPath: string) {
     this.token = ''
+    this.certPath = certPath
+  }
+
+  grpc(): grpc.ChannelCredentials {
+    const cert = fs.readFileSync(this.certPath, 'ascii')
+
+    const grpcAuth = (
+      options: CallMetadataOptions,
+      cb: (err: Error | null, metadata?: grpc.Metadata) => void
+    ) => {
+      const metadata = new grpc.Metadata()
+      metadata.set('authorization', this.token)
+      cb(null, metadata)
+    }
+
+    const callCreds = grpc.credentials.createFromMetadataGenerator(grpcAuth)
+    const sslCreds = grpc.credentials.createSsl(Buffer.from(cert, 'ascii'))
+    const creds = grpc.credentials.combineChannelCredentials(sslCreds, callCreds)
+    return creds
   }
 }
 
 type CallMetadataOptions = {service_url: string}
-
-export const credentials = (certPath: string, auth: Auth): grpc.ChannelCredentials => {
-  const cert = fs.readFileSync(certPath, 'ascii')
-
-  const grpcAuth = (
-    options: CallMetadataOptions,
-    cb: (err: Error | null, metadata?: grpc.Metadata) => void
-  ) => {
-    const metadata = new grpc.Metadata()
-    metadata.set('authorization', auth.token)
-    cb(null, metadata)
-  }
-
-  const callCreds = grpc.credentials.createFromMetadataGenerator(grpcAuth)
-  const sslCreds = grpc.credentials.createSsl(Buffer.from(cert, 'ascii'))
-  const creds = grpc.credentials.combineChannelCredentials(sslCreds, callCreds)
-  return creds
-}
 
 const newClient = (
   packageDefinition: PackageDefinition,
@@ -70,32 +72,36 @@ const newClient = (
   return serviceCls
 }
 
-const createKeysClient = (addr: string, credentials: grpc.ChannelCredentials): KeysService => {
+const keysService = (addr: string, creds: Credentials): KeysService => {
   const packageDefinition: PackageDefinition = createPackageDefinition(keysProto as Root, {
     arrays: true,
     enums: String,
     defaults: true,
   })
-  const serviceCls = newClient(packageDefinition, 'keys', 'Keys')
-  const cl = new serviceCls(addr, credentials)
-  return new KeysService(cl)
+  const client = (): ServiceClient => {
+    const serviceCls = newClient(packageDefinition, 'keys', 'Keys')
+    return new serviceCls(addr, creds.grpc())
+  }
+  return new KeysService(client)
 }
 
-const createFIDO2Client = (addr: string, credentials: grpc.ChannelCredentials): FIDO2Service => {
+const fido2Service = (addr: string, creds: Credentials): FIDO2Service => {
   const packageDefinition: PackageDefinition = createPackageDefinition(fido2Proto as Root, {
     arrays: true,
     enums: String,
     defaults: true,
   })
-  const serviceCls = newClient(packageDefinition, 'fido2', 'FIDO2')
-  const cl = new serviceCls(addr, credentials)
-  return new FIDO2Service(cl)
+  const client = (): ServiceClient => {
+    const serviceCls = newClient(packageDefinition, 'fido2', 'FIDO2')
+    return new serviceCls(addr, creds.grpc())
+  }
+  return new FIDO2Service(client)
 }
 
 export {
-  Auth,
-  createKeysClient,
-  createFIDO2Client,
+  Credentials,
+  keysService,
+  fido2Service,
   KeysService,
   FIDO2Service,
   ServiceClient,

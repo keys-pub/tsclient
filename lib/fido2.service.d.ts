@@ -9,8 +9,10 @@ export declare type RPCError = {
     details: string;
 };
 export declare class FIDO2Service extends EventEmitter {
-    service: ServiceClient;
-    constructor(service: ServiceClient);
+    serviceFn: () => ServiceClient;
+    client?: ServiceClient;
+    constructor(serviceFn: () => ServiceClient);
+    service(): ServiceClient;
     emitError(err: RPCError): void;
     Devices(req: fido2.DevicesRequest): Promise<fido2.DevicesResponse>;
     DeviceInfo(req: fido2.DeviceInfoRequest): Promise<fido2.DeviceInfoResponse>;

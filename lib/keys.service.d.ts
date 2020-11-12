@@ -10,8 +10,10 @@ export declare type RPCError = {
     details: string;
 };
 export declare class KeysService extends EventEmitter {
-    service: ServiceClient;
-    constructor(service: ServiceClient);
+    serviceFn: () => ServiceClient;
+    client?: ServiceClient;
+    constructor(serviceFn: () => ServiceClient);
+    service(): ServiceClient;
     emitError(err: RPCError): void;
     KeyGenerate(req: keys.KeyGenerateRequest): Promise<keys.KeyGenerateResponse>;
     Keys(req: keys.KeysRequest): Promise<keys.KeysResponse>;
@@ -74,9 +76,14 @@ export declare class KeysService extends EventEmitter {
     DocumentDelete(req: keys.DocumentDeleteRequest): Promise<keys.DocumentDeleteResponse>;
     ConfigGet(req: keys.ConfigGetRequest): Promise<keys.ConfigGetResponse>;
     ConfigSet(req: keys.ConfigSetRequest): Promise<keys.ConfigSetResponse>;
-    AdminSignURL(req: keys.AdminSignURLRequest): Promise<keys.AdminSignURLResponse>;
-    AdminCheck(req: keys.AdminCheckRequest): Promise<keys.AdminCheckResponse>;
+    Channels(req: keys.ChannelsRequest): Promise<keys.ChannelsResponse>;
+    ChannelCreate(req: keys.ChannelCreateRequest): Promise<keys.ChannelCreateResponse>;
+    ChannelInviteCreate(req: keys.ChannelInviteCreateRequest): Promise<keys.ChannelInviteCreateResponse>;
+    ChannelInviteAccept(req: keys.ChannelInviteAcceptRequest): Promise<keys.ChannelInviteAcceptResponse>;
     MessagePrepare(req: keys.MessagePrepareRequest): Promise<keys.MessagePrepareResponse>;
     MessageCreate(req: keys.MessageCreateRequest): Promise<keys.MessageCreateResponse>;
     Messages(req: keys.MessagesRequest): Promise<keys.MessagesResponse>;
+    AdminSignURL(req: keys.AdminSignURLRequest): Promise<keys.AdminSignURLResponse>;
+    AdminCheck(req: keys.AdminCheckRequest): Promise<keys.AdminCheckResponse>;
+    Relay(): ClientDuplexStream<keys.RelayInput, keys.RelayOutput>;
 }

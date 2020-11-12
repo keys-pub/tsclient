@@ -13,6 +13,7 @@ bin="$dir/../node_modules/.bin"
 # $bin/pbjs -t static-module --es6 -w es6 -o ../lib/fido2.js fido2.proto 
 # $bin/pbts -o ../lib/fido2.d.ts ../lib/fido2.js
 
+echo "pbjs"
 $bin/pbjs -t json-module --es6 -w es6 -o ../src/keys.proto.js keys.proto 
 $bin/pbjs -t json-module --es6 -w es6 -o ../src/fido2.proto.js fido2.proto
 
@@ -32,21 +33,20 @@ protoc \
   --plugin="protoc-gen-tstypes=${tstypes_path}" \
   --tstypes_out=../src \
   --tstypes_opt=declare_namespace=false,outpattern="{{.BaseName}}.ts" \
-  keys.proto fido2.proto
+  *.proto
 
 echo "protoc-gen-tsrpc"
 if [ ! -x "$(command -v protoc-gen-tsrpc)" ]; then
     echo "Installing github.com/keys-pub/protoc-gen-tsrpc"
     go install github.com/keys-pub/protoc-gen-tsrpc
 fi
+
 tsrpc_path=`go env GOPATH`/bin/protoc-gen-tsrpc
+for proto in keys.proto fido2.proto
+do
 protoc \
   $protoc_include \
   --plugin="protoc-gen-tsrpc=${tsrpc_path}" \
   --tsrpc_out=../src \
-  keys.proto
-protoc \
-  $protoc_include \
-  --plugin="protoc-gen-tsrpc=${tsrpc_path}" \
-  --tsrpc_out=../src \
-  fido2.proto
+  $proto
+done

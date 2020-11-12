@@ -15,11 +15,19 @@ export type RPCError = {
 }
 
 export class FIDO2Service extends EventEmitter {
-  service: ServiceClient
+  serviceFn: () => ServiceClient
+  client?: ServiceClient
   
-  constructor(service: ServiceClient) {
+  constructor(serviceFn: () => ServiceClient) {
     super()
-    this.service = service
+    this.serviceFn = serviceFn
+  }
+
+  service(): ServiceClient {
+    if (!this.client) {
+      this.client = this.serviceFn()
+    }
+    return this.client
   }
 
   emitError(err: RPCError) {
@@ -39,10 +47,10 @@ export class FIDO2Service extends EventEmitter {
 
   Devices(req: fido2.DevicesRequest): Promise<fido2.DevicesResponse> {
     return new Promise<fido2.DevicesResponse>((resolve, reject) => {
-      this.service.Devices(req, (err: RPCError, resp: fido2.DevicesResponse) => {
+      this.service().Devices(req, (err: RPCError, resp: fido2.DevicesResponse) => {
         if (err) {
-		  reject(err)
-		  this.emitError(err)
+          reject(err)
+          this.emitError(err)
           return
         }
         resolve(resp)
@@ -52,10 +60,10 @@ export class FIDO2Service extends EventEmitter {
 
   DeviceInfo(req: fido2.DeviceInfoRequest): Promise<fido2.DeviceInfoResponse> {
     return new Promise<fido2.DeviceInfoResponse>((resolve, reject) => {
-      this.service.DeviceInfo(req, (err: RPCError, resp: fido2.DeviceInfoResponse) => {
+      this.service().DeviceInfo(req, (err: RPCError, resp: fido2.DeviceInfoResponse) => {
         if (err) {
-		  reject(err)
-		  this.emitError(err)
+          reject(err)
+          this.emitError(err)
           return
         }
         resolve(resp)
@@ -65,10 +73,10 @@ export class FIDO2Service extends EventEmitter {
 
   DeviceType(req: fido2.DeviceTypeRequest): Promise<fido2.DeviceTypeResponse> {
     return new Promise<fido2.DeviceTypeResponse>((resolve, reject) => {
-      this.service.DeviceType(req, (err: RPCError, resp: fido2.DeviceTypeResponse) => {
+      this.service().DeviceType(req, (err: RPCError, resp: fido2.DeviceTypeResponse) => {
         if (err) {
-		  reject(err)
-		  this.emitError(err)
+          reject(err)
+          this.emitError(err)
           return
         }
         resolve(resp)
@@ -78,10 +86,10 @@ export class FIDO2Service extends EventEmitter {
 
   MakeCredential(req: fido2.MakeCredentialRequest): Promise<fido2.MakeCredentialResponse> {
     return new Promise<fido2.MakeCredentialResponse>((resolve, reject) => {
-      this.service.MakeCredential(req, (err: RPCError, resp: fido2.MakeCredentialResponse) => {
+      this.service().MakeCredential(req, (err: RPCError, resp: fido2.MakeCredentialResponse) => {
         if (err) {
-		  reject(err)
-		  this.emitError(err)
+          reject(err)
+          this.emitError(err)
           return
         }
         resolve(resp)
@@ -91,10 +99,10 @@ export class FIDO2Service extends EventEmitter {
 
   SetPIN(req: fido2.SetPINRequest): Promise<fido2.SetPINResponse> {
     return new Promise<fido2.SetPINResponse>((resolve, reject) => {
-      this.service.SetPIN(req, (err: RPCError, resp: fido2.SetPINResponse) => {
+      this.service().SetPIN(req, (err: RPCError, resp: fido2.SetPINResponse) => {
         if (err) {
-		  reject(err)
-		  this.emitError(err)
+          reject(err)
+          this.emitError(err)
           return
         }
         resolve(resp)
@@ -104,10 +112,10 @@ export class FIDO2Service extends EventEmitter {
 
   Reset(req: fido2.ResetRequest): Promise<fido2.ResetResponse> {
     return new Promise<fido2.ResetResponse>((resolve, reject) => {
-      this.service.Reset(req, (err: RPCError, resp: fido2.ResetResponse) => {
+      this.service().Reset(req, (err: RPCError, resp: fido2.ResetResponse) => {
         if (err) {
-		  reject(err)
-		  this.emitError(err)
+          reject(err)
+          this.emitError(err)
           return
         }
         resolve(resp)
@@ -117,10 +125,10 @@ export class FIDO2Service extends EventEmitter {
 
   RetryCount(req: fido2.RetryCountRequest): Promise<fido2.RetryCountResponse> {
     return new Promise<fido2.RetryCountResponse>((resolve, reject) => {
-      this.service.RetryCount(req, (err: RPCError, resp: fido2.RetryCountResponse) => {
+      this.service().RetryCount(req, (err: RPCError, resp: fido2.RetryCountResponse) => {
         if (err) {
-		  reject(err)
-		  this.emitError(err)
+          reject(err)
+          this.emitError(err)
           return
         }
         resolve(resp)
@@ -130,10 +138,10 @@ export class FIDO2Service extends EventEmitter {
 
   Assertion(req: fido2.AssertionRequest): Promise<fido2.AssertionResponse> {
     return new Promise<fido2.AssertionResponse>((resolve, reject) => {
-      this.service.Assertion(req, (err: RPCError, resp: fido2.AssertionResponse) => {
+      this.service().Assertion(req, (err: RPCError, resp: fido2.AssertionResponse) => {
         if (err) {
-		  reject(err)
-		  this.emitError(err)
+          reject(err)
+          this.emitError(err)
           return
         }
         resolve(resp)
@@ -143,10 +151,10 @@ export class FIDO2Service extends EventEmitter {
 
   CredentialsInfo(req: fido2.CredentialsInfoRequest): Promise<fido2.CredentialsInfoResponse> {
     return new Promise<fido2.CredentialsInfoResponse>((resolve, reject) => {
-      this.service.CredentialsInfo(req, (err: RPCError, resp: fido2.CredentialsInfoResponse) => {
+      this.service().CredentialsInfo(req, (err: RPCError, resp: fido2.CredentialsInfoResponse) => {
         if (err) {
-		  reject(err)
-		  this.emitError(err)
+          reject(err)
+          this.emitError(err)
           return
         }
         resolve(resp)
@@ -156,10 +164,10 @@ export class FIDO2Service extends EventEmitter {
 
   Credentials(req: fido2.CredentialsRequest): Promise<fido2.CredentialsResponse> {
     return new Promise<fido2.CredentialsResponse>((resolve, reject) => {
-      this.service.Credentials(req, (err: RPCError, resp: fido2.CredentialsResponse) => {
+      this.service().Credentials(req, (err: RPCError, resp: fido2.CredentialsResponse) => {
         if (err) {
-		  reject(err)
-		  this.emitError(err)
+          reject(err)
+          this.emitError(err)
           return
         }
         resolve(resp)
@@ -169,10 +177,10 @@ export class FIDO2Service extends EventEmitter {
 
   RelyingParties(req: fido2.RelyingPartiesRequest): Promise<fido2.RelyingPartiesResponse> {
     return new Promise<fido2.RelyingPartiesResponse>((resolve, reject) => {
-      this.service.RelyingParties(req, (err: RPCError, resp: fido2.RelyingPartiesResponse) => {
+      this.service().RelyingParties(req, (err: RPCError, resp: fido2.RelyingPartiesResponse) => {
         if (err) {
-		  reject(err)
-		  this.emitError(err)
+          reject(err)
+          this.emitError(err)
           return
         }
         resolve(resp)
@@ -182,10 +190,10 @@ export class FIDO2Service extends EventEmitter {
 
   GenerateHMACSecret(req: fido2.GenerateHMACSecretRequest): Promise<fido2.GenerateHMACSecretResponse> {
     return new Promise<fido2.GenerateHMACSecretResponse>((resolve, reject) => {
-      this.service.GenerateHMACSecret(req, (err: RPCError, resp: fido2.GenerateHMACSecretResponse) => {
+      this.service().GenerateHMACSecret(req, (err: RPCError, resp: fido2.GenerateHMACSecretResponse) => {
         if (err) {
-		  reject(err)
-		  this.emitError(err)
+          reject(err)
+          this.emitError(err)
           return
         }
         resolve(resp)
@@ -195,10 +203,10 @@ export class FIDO2Service extends EventEmitter {
 
   HMACSecret(req: fido2.HMACSecretRequest): Promise<fido2.HMACSecretResponse> {
     return new Promise<fido2.HMACSecretResponse>((resolve, reject) => {
-      this.service.HMACSecret(req, (err: RPCError, resp: fido2.HMACSecretResponse) => {
+      this.service().HMACSecret(req, (err: RPCError, resp: fido2.HMACSecretResponse) => {
         if (err) {
-		  reject(err)
-		  this.emitError(err)
+          reject(err)
+          this.emitError(err)
           return
         }
         resolve(resp)
