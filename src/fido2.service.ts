@@ -6,6 +6,7 @@ import {ClientDuplexStream} from '@grpc/grpc-js/build/src/call'
 import * as grpc from '@grpc/grpc-js'
 import {EventEmitter} from 'events'
 import * as fido2 from './fido2'
+import {dummyLogger, Logger} from 'ts-log'
 
 export type RPCError = {
   name: string
@@ -17,6 +18,7 @@ export type RPCError = {
 export class FIDO2Service extends EventEmitter {
   serviceFn: () => ServiceClient
   client?: ServiceClient
+  log: Logger = dummyLogger
   
   constructor(serviceFn: () => ServiceClient) {
     super()
@@ -32,21 +34,22 @@ export class FIDO2Service extends EventEmitter {
 
   emitError(err: RPCError) {
     switch (err.code) {
-    case grpc.status.PERMISSION_DENIED:
-    case grpc.status.UNAUTHENTICATED:
-      this.emit('unauthenticated', err)
-      break
-    case grpc.status.UNAVAILABLE:
-      this.emit('unavailable', err)
-      break
-    default:
-      this.emit('error', err)
-      break
-    }
+      case grpc.status.PERMISSION_DENIED:
+      case grpc.status.UNAUTHENTICATED:
+        this.emit('unauthenticated', err)
+        break
+      case grpc.status.UNAVAILABLE:
+        this.emit('unavailable', err)
+        break
+      default:
+        this.emit('error', err)
+        break
+	}
   }
 
   Devices(req: fido2.DevicesRequest): Promise<fido2.DevicesResponse> {
     return new Promise<fido2.DevicesResponse>((resolve, reject) => {
+	  this.log.info('Devices')
       this.service().Devices(req, (err: RPCError, resp: fido2.DevicesResponse) => {
         if (err) {
           reject(err)
@@ -60,6 +63,7 @@ export class FIDO2Service extends EventEmitter {
 
   DeviceInfo(req: fido2.DeviceInfoRequest): Promise<fido2.DeviceInfoResponse> {
     return new Promise<fido2.DeviceInfoResponse>((resolve, reject) => {
+	  this.log.info('DeviceInfo')
       this.service().DeviceInfo(req, (err: RPCError, resp: fido2.DeviceInfoResponse) => {
         if (err) {
           reject(err)
@@ -73,6 +77,7 @@ export class FIDO2Service extends EventEmitter {
 
   DeviceType(req: fido2.DeviceTypeRequest): Promise<fido2.DeviceTypeResponse> {
     return new Promise<fido2.DeviceTypeResponse>((resolve, reject) => {
+	  this.log.info('DeviceType')
       this.service().DeviceType(req, (err: RPCError, resp: fido2.DeviceTypeResponse) => {
         if (err) {
           reject(err)
@@ -86,6 +91,7 @@ export class FIDO2Service extends EventEmitter {
 
   MakeCredential(req: fido2.MakeCredentialRequest): Promise<fido2.MakeCredentialResponse> {
     return new Promise<fido2.MakeCredentialResponse>((resolve, reject) => {
+	  this.log.info('MakeCredential')
       this.service().MakeCredential(req, (err: RPCError, resp: fido2.MakeCredentialResponse) => {
         if (err) {
           reject(err)
@@ -99,6 +105,7 @@ export class FIDO2Service extends EventEmitter {
 
   SetPIN(req: fido2.SetPINRequest): Promise<fido2.SetPINResponse> {
     return new Promise<fido2.SetPINResponse>((resolve, reject) => {
+	  this.log.info('SetPIN')
       this.service().SetPIN(req, (err: RPCError, resp: fido2.SetPINResponse) => {
         if (err) {
           reject(err)
@@ -112,6 +119,7 @@ export class FIDO2Service extends EventEmitter {
 
   Reset(req: fido2.ResetRequest): Promise<fido2.ResetResponse> {
     return new Promise<fido2.ResetResponse>((resolve, reject) => {
+	  this.log.info('Reset')
       this.service().Reset(req, (err: RPCError, resp: fido2.ResetResponse) => {
         if (err) {
           reject(err)
@@ -125,6 +133,7 @@ export class FIDO2Service extends EventEmitter {
 
   RetryCount(req: fido2.RetryCountRequest): Promise<fido2.RetryCountResponse> {
     return new Promise<fido2.RetryCountResponse>((resolve, reject) => {
+	  this.log.info('RetryCount')
       this.service().RetryCount(req, (err: RPCError, resp: fido2.RetryCountResponse) => {
         if (err) {
           reject(err)
@@ -138,6 +147,7 @@ export class FIDO2Service extends EventEmitter {
 
   Assertion(req: fido2.AssertionRequest): Promise<fido2.AssertionResponse> {
     return new Promise<fido2.AssertionResponse>((resolve, reject) => {
+	  this.log.info('Assertion')
       this.service().Assertion(req, (err: RPCError, resp: fido2.AssertionResponse) => {
         if (err) {
           reject(err)
@@ -151,6 +161,7 @@ export class FIDO2Service extends EventEmitter {
 
   CredentialsInfo(req: fido2.CredentialsInfoRequest): Promise<fido2.CredentialsInfoResponse> {
     return new Promise<fido2.CredentialsInfoResponse>((resolve, reject) => {
+	  this.log.info('CredentialsInfo')
       this.service().CredentialsInfo(req, (err: RPCError, resp: fido2.CredentialsInfoResponse) => {
         if (err) {
           reject(err)
@@ -164,6 +175,7 @@ export class FIDO2Service extends EventEmitter {
 
   Credentials(req: fido2.CredentialsRequest): Promise<fido2.CredentialsResponse> {
     return new Promise<fido2.CredentialsResponse>((resolve, reject) => {
+	  this.log.info('Credentials')
       this.service().Credentials(req, (err: RPCError, resp: fido2.CredentialsResponse) => {
         if (err) {
           reject(err)
@@ -177,6 +189,7 @@ export class FIDO2Service extends EventEmitter {
 
   RelyingParties(req: fido2.RelyingPartiesRequest): Promise<fido2.RelyingPartiesResponse> {
     return new Promise<fido2.RelyingPartiesResponse>((resolve, reject) => {
+	  this.log.info('RelyingParties')
       this.service().RelyingParties(req, (err: RPCError, resp: fido2.RelyingPartiesResponse) => {
         if (err) {
           reject(err)
@@ -190,6 +203,7 @@ export class FIDO2Service extends EventEmitter {
 
   GenerateHMACSecret(req: fido2.GenerateHMACSecretRequest): Promise<fido2.GenerateHMACSecretResponse> {
     return new Promise<fido2.GenerateHMACSecretResponse>((resolve, reject) => {
+	  this.log.info('GenerateHMACSecret')
       this.service().GenerateHMACSecret(req, (err: RPCError, resp: fido2.GenerateHMACSecretResponse) => {
         if (err) {
           reject(err)
@@ -203,6 +217,7 @@ export class FIDO2Service extends EventEmitter {
 
   HMACSecret(req: fido2.HMACSecretRequest): Promise<fido2.HMACSecretResponse> {
     return new Promise<fido2.HMACSecretResponse>((resolve, reject) => {
+	  this.log.info('HMACSecret')
       this.service().HMACSecret(req, (err: RPCError, resp: fido2.HMACSecretResponse) => {
         if (err) {
           reject(err)

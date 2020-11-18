@@ -789,13 +789,8 @@ export interface VaultUpdateResponse {
 export interface Message {
     id?: string;
     sender?: Key;
-    content?: Content;
+    text?: Array<string>;
     createdAt?: number;
-}
-
-export interface Content {
-    data?: Uint8Array;
-    type?: ContentType;
 }
 
 export interface MessagePrepareRequest {
@@ -830,10 +825,12 @@ export interface MessagesResponse {
 export interface Channel {
     id?: string;
     name?: string;
+    snippet?: string;
+    updatedAt?: number;
 }
 
 export interface ChannelsRequest {
-    member?: string;
+    inbox?: string;
 }
 
 export interface ChannelsResponse {
@@ -842,25 +839,25 @@ export interface ChannelsResponse {
 
 export interface ChannelCreateRequest {
     name?: string;
-    member?: string;
+    inbox?: string;
 }
 
 export interface ChannelCreateResponse {
     channel?: Channel;
 }
 
-export interface ChannelInviteCreateRequest {
+export interface ChannelInvitesCreateRequest {
     channel?: string;
-    recipient?: string;
     sender?: string;
+    recipients?: Array<string>;
 }
 
-export interface ChannelInviteCreateResponse {
+export interface ChannelInvitesCreateResponse {
 }
 
 export interface ChannelInviteAcceptRequest {
     channel?: string;
-    member?: string;
+    inbox?: string;
 }
 
 export interface ChannelInviteAcceptResponse {
@@ -937,8 +934,7 @@ export interface WormholeInput {
     recipient?: string;
     invite?: string;
     id?: string;
-    data?: Uint8Array;
-    type?: ContentType;
+    text?: string;
 }
 
 export interface WormholeMessage {
@@ -946,7 +942,7 @@ export interface WormholeMessage {
     sender?: Key;
     recipient?: Key;
     type?: WormholeMessageType;
-    content?: Content;
+    text?: string;
     createdAt?: number;
 }
 
@@ -1019,7 +1015,7 @@ export interface KeysService {
     ConfigSet: (r:ConfigSetRequest) => ConfigSetResponse;
     Channels: (r:ChannelsRequest) => ChannelsResponse;
     ChannelCreate: (r:ChannelCreateRequest) => ChannelCreateResponse;
-    ChannelInviteCreate: (r:ChannelInviteCreateRequest) => ChannelInviteCreateResponse;
+    ChannelInvitesCreate: (r:ChannelInvitesCreateRequest) => ChannelInvitesCreateResponse;
     ChannelInviteAccept: (r:ChannelInviteAcceptRequest) => ChannelInviteAcceptResponse;
     MessagePrepare: (r:MessagePrepareRequest) => MessagePrepareResponse;
     MessageCreate: (r:MessageCreateRequest) => MessageCreateResponse;

@@ -2,6 +2,7 @@
 import { ServiceClient } from '@grpc/grpc-js/build/src/make-client';
 import { EventEmitter } from 'events';
 import * as fido2 from './fido2';
+import { Logger } from 'ts-log';
 export declare type RPCError = {
     name: string;
     message: string;
@@ -11,6 +12,7 @@ export declare type RPCError = {
 export declare class FIDO2Service extends EventEmitter {
     serviceFn: () => ServiceClient;
     client?: ServiceClient;
+    log: Logger;
     constructor(serviceFn: () => ServiceClient);
     service(): ServiceClient;
     emitError(err: RPCError): void;

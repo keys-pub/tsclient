@@ -3,6 +3,7 @@ import { ServiceClient } from '@grpc/grpc-js/build/src/make-client';
 import { ClientDuplexStream } from '@grpc/grpc-js/build/src/call';
 import { EventEmitter } from 'events';
 import * as keys from './keys';
+import { Logger } from 'ts-log';
 export declare type RPCError = {
     name: string;
     message: string;
@@ -12,6 +13,7 @@ export declare type RPCError = {
 export declare class KeysService extends EventEmitter {
     serviceFn: () => ServiceClient;
     client?: ServiceClient;
+    log: Logger;
     constructor(serviceFn: () => ServiceClient);
     service(): ServiceClient;
     emitError(err: RPCError): void;
@@ -78,7 +80,7 @@ export declare class KeysService extends EventEmitter {
     ConfigSet(req: keys.ConfigSetRequest): Promise<keys.ConfigSetResponse>;
     Channels(req: keys.ChannelsRequest): Promise<keys.ChannelsResponse>;
     ChannelCreate(req: keys.ChannelCreateRequest): Promise<keys.ChannelCreateResponse>;
-    ChannelInviteCreate(req: keys.ChannelInviteCreateRequest): Promise<keys.ChannelInviteCreateResponse>;
+    ChannelInvitesCreate(req: keys.ChannelInvitesCreateRequest): Promise<keys.ChannelInvitesCreateResponse>;
     ChannelInviteAccept(req: keys.ChannelInviteAcceptRequest): Promise<keys.ChannelInviteAcceptResponse>;
     MessagePrepare(req: keys.MessagePrepareRequest): Promise<keys.MessagePrepareResponse>;
     MessageCreate(req: keys.MessageCreateRequest): Promise<keys.MessageCreateResponse>;

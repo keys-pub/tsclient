@@ -282,9 +282,9 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             requestType: "ChannelCreateRequest",
             responseType: "ChannelCreateResponse"
           },
-          ChannelInviteCreate: {
-            requestType: "ChannelInviteCreateRequest",
-            responseType: "ChannelInviteCreateResponse"
+          ChannelInvitesCreate: {
+            requestType: "ChannelInvitesCreateRequest",
+            responseType: "ChannelInvitesCreateResponse"
           },
           ChannelInviteAccept: {
             requestType: "ChannelInviteAcceptRequest",
@@ -1998,25 +1998,14 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "Key",
             id: 2
           },
-          content: {
-            type: "Content",
-            id: 10
+          text: {
+            rule: "repeated",
+            type: "string",
+            id: 3
           },
           createdAt: {
             type: "int64",
             id: 21
-          }
-        }
-      },
-      Content: {
-        fields: {
-          data: {
-            type: "bytes",
-            id: 1
-          },
-          type: {
-            type: "ContentType",
-            id: 2
           }
         }
       },
@@ -2101,12 +2090,20 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           name: {
             type: "string",
             id: 2
+          },
+          snippet: {
+            type: "string",
+            id: 3
+          },
+          updatedAt: {
+            type: "int64",
+            id: 4
           }
         }
       },
       ChannelsRequest: {
         fields: {
-          member: {
+          inbox: {
             type: "string",
             id: 1
           }
@@ -2127,7 +2124,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "string",
             id: 1
           },
-          member: {
+          inbox: {
             type: "string",
             id: 2
           }
@@ -2141,23 +2138,24 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           }
         }
       },
-      ChannelInviteCreateRequest: {
+      ChannelInvitesCreateRequest: {
         fields: {
           channel: {
             type: "string",
             id: 1
           },
-          recipient: {
+          sender: {
             type: "string",
             id: 2
           },
-          sender: {
+          recipients: {
+            rule: "repeated",
             type: "string",
             id: 3
           }
         }
       },
-      ChannelInviteCreateResponse: {
+      ChannelInvitesCreateResponse: {
         fields: {}
       },
       ChannelInviteAcceptRequest: {
@@ -2166,7 +2164,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "string",
             id: 1
           },
-          member: {
+          inbox: {
             type: "string",
             id: 2
           }
@@ -2361,13 +2359,9 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
               "(go.field).name": "ID"
             }
           },
-          data: {
-            type: "bytes",
+          text: {
+            type: "string",
             id: 11
-          },
-          type: {
-            type: "ContentType",
-            id: 12
           }
         }
       },
@@ -2406,8 +2400,8 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "WormholeMessageType",
             id: 5
           },
-          content: {
-            type: "Content",
+          text: {
+            type: "string",
             id: 10
           },
           createdAt: {
