@@ -50,9 +50,15 @@ export declare enum UserStatus {
     USER_CONN_FAILURE = "USER_CONN_FAILURE",
     USER_FAILURE = "USER_FAILURE"
 }
-export declare enum ContentType {
-    BINARY_CONTENT = "BINARY_CONTENT",
-    UTF8_CONTENT = "UTF8_CONTENT"
+export declare enum MessageStatus {
+    MESSAGE_SENT = "MESSAGE_SENT",
+    MESSAGE_PENDING = "MESSAGE_PENDING"
+}
+export declare enum RelayType {
+    RELAY_UNSPECIFIED = "RELAY_UNSPECIFIED",
+    RELAY_HELLO = "RELAY_HELLO",
+    RELAY_CHANNEL_CREATED = "RELAY_CHANNEL_CREATED",
+    RELAY_CHANNEL_MESSAGE = "RELAY_CHANNEL_MESSAGE"
 }
 export declare enum WormholeStatus {
     WORMHOLE_DEFAULT = "WORMHOLE_DEFAULT",
@@ -63,7 +69,7 @@ export declare enum WormholeStatus {
     WORMHOLE_CONNECTED = "WORMHOLE_CONNECTED",
     WORMHOLE_CLOSED = "WORMHOLE_CLOSED"
 }
-export declare enum WormholeMessageType {
+export declare enum WormholeMessageStatus {
     WORMHOLE_MESSAGE_SENT = "WORMHOLE_MESSAGE_SENT",
     WORMHOLE_MESSAGE_PENDING = "WORMHOLE_MESSAGE_PENDING",
     WORMHOLE_MESSAGE_ACK = "WORMHOLE_MESSAGE_ACK"
@@ -380,6 +386,7 @@ export interface KeyRemoveResponse {
 export interface Key {
     id?: string;
     type?: string;
+    isPrivate?: boolean;
     user?: User;
     saved?: boolean;
     sigchainLength?: number;
@@ -560,6 +567,7 @@ export interface Message {
     id?: string;
     sender?: Key;
     text?: Array<string>;
+    status?: MessageStatus;
     createdAt?: number;
 }
 export interface MessagePrepareRequest {
@@ -573,6 +581,7 @@ export interface MessagePrepareResponse {
 export interface MessageCreateRequest {
     sender?: string;
     channel?: string;
+    id?: string;
     text?: string;
 }
 export interface MessageCreateResponse {
@@ -580,42 +589,40 @@ export interface MessageCreateResponse {
 }
 export interface MessagesRequest {
     channel?: string;
-    member?: string;
+    user?: string;
+    update?: boolean;
 }
 export interface MessagesResponse {
     messages?: Array<Message>;
+}
+export interface RelayRequest {
+    keys?: Array<string>;
+}
+export interface RelayOutput {
+    type?: RelayType;
+    channel?: string;
+    user?: string;
+    index?: number;
 }
 export interface Channel {
     id?: string;
     name?: string;
     snippet?: string;
     updatedAt?: number;
+    index?: number;
 }
 export interface ChannelsRequest {
-    inbox?: string;
+    user?: string;
 }
 export interface ChannelsResponse {
     channels?: Array<Channel>;
 }
 export interface ChannelCreateRequest {
     name?: string;
-    inbox?: string;
+    user?: string;
 }
 export interface ChannelCreateResponse {
     channel?: Channel;
-}
-export interface ChannelInvitesCreateRequest {
-    channel?: string;
-    sender?: string;
-    recipients?: Array<string>;
-}
-export interface ChannelInvitesCreateResponse {
-}
-export interface ChannelInviteAcceptRequest {
-    channel?: string;
-    inbox?: string;
-}
-export interface ChannelInviteAcceptResponse {
 }
 export interface AdminSignURLRequest {
     signer?: string;
@@ -664,11 +671,6 @@ export interface ConfigSetRequest {
 }
 export interface ConfigSetResponse {
 }
-export interface RelayInput {
-}
-export interface RelayOutput {
-    kid?: string;
-}
 export interface WormholeInput {
     sender?: string;
     recipient?: string;
@@ -680,7 +682,7 @@ export interface WormholeMessage {
     id?: string;
     sender?: Key;
     recipient?: Key;
-    type?: WormholeMessageType;
+    status?: WormholeMessageStatus;
     text?: string;
     createdAt?: number;
 }
@@ -810,19 +812,14 @@ export interface KeysService {
     DocumentDelete: (r: DocumentDeleteRequest) => DocumentDeleteResponse;
     ConfigGet: (r: ConfigGetRequest) => ConfigGetResponse;
     ConfigSet: (r: ConfigSetRequest) => ConfigSetResponse;
+    AdminSignURL: (r: AdminSignURLRequest) => AdminSignURLResponse;
+    AdminCheck: (r: AdminCheckRequest) => AdminCheckResponse;
     Channels: (r: ChannelsRequest) => ChannelsResponse;
     ChannelCreate: (r: ChannelCreateRequest) => ChannelCreateResponse;
-    ChannelInvitesCreate: (r: ChannelInvitesCreateRequest) => ChannelInvitesCreateResponse;
-    ChannelInviteAccept: (r: ChannelInviteAcceptRequest) => ChannelInviteAcceptResponse;
     MessagePrepare: (r: MessagePrepareRequest) => MessagePrepareResponse;
     MessageCreate: (r: MessageCreateRequest) => MessageCreateResponse;
     Messages: (r: MessagesRequest) => MessagesResponse;
-    AdminSignURL: (r: AdminSignURLRequest) => AdminSignURLResponse;
-    AdminCheck: (r: AdminCheckRequest) => AdminCheckResponse;
-    Relay: (r: () => {
-        value: RelayInput;
-        done: boolean;
-    }, cb: (a: {
+    Relay: (r: RelayRequest, cb: (a: {
         value: RelayOutput;
         done: boolean;
     }) => void) => void;

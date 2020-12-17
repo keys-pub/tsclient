@@ -274,6 +274,14 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             requestType: "ConfigSetRequest",
             responseType: "ConfigSetResponse"
           },
+          AdminSignURL: {
+            requestType: "AdminSignURLRequest",
+            responseType: "AdminSignURLResponse"
+          },
+          AdminCheck: {
+            requestType: "AdminCheckRequest",
+            responseType: "AdminCheckResponse"
+          },
           Channels: {
             requestType: "ChannelsRequest",
             responseType: "ChannelsResponse"
@@ -281,14 +289,6 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           ChannelCreate: {
             requestType: "ChannelCreateRequest",
             responseType: "ChannelCreateResponse"
-          },
-          ChannelInvitesCreate: {
-            requestType: "ChannelInvitesCreateRequest",
-            responseType: "ChannelInvitesCreateResponse"
-          },
-          ChannelInviteAccept: {
-            requestType: "ChannelInviteAcceptRequest",
-            responseType: "ChannelInviteAcceptResponse"
           },
           MessagePrepare: {
             requestType: "MessagePrepareRequest",
@@ -302,17 +302,8 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             requestType: "MessagesRequest",
             responseType: "MessagesResponse"
           },
-          AdminSignURL: {
-            requestType: "AdminSignURLRequest",
-            responseType: "AdminSignURLResponse"
-          },
-          AdminCheck: {
-            requestType: "AdminCheckRequest",
-            responseType: "AdminCheckResponse"
-          },
           Relay: {
-            requestType: "RelayInput",
-            requestStream: true,
+            requestType: "RelayRequest",
             responseType: "RelayOutput",
             responseStream: true
           }
@@ -1364,6 +1355,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "string",
             id: 3
           },
+          isPrivate: {
+            type: "bool",
+            id: 4
+          },
           user: {
             type: "User",
             id: 6
@@ -1976,13 +1971,13 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
       VaultUpdateResponse: {
         fields: {}
       },
-      ContentType: {
+      MessageStatus: {
         options: {
-          "(go.enum).name": "ContentType"
+          "(go.enum).name": "MessageStatus"
         },
         values: {
-          BINARY_CONTENT: 0,
-          UTF8_CONTENT: 1
+          MESSAGE_SENT: 0,
+          MESSAGE_PENDING: 1
         }
       },
       Message: {
@@ -2001,11 +1996,15 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           text: {
             rule: "repeated",
             type: "string",
-            id: 3
+            id: 10
+          },
+          status: {
+            type: "MessageStatus",
+            id: 20
           },
           createdAt: {
             type: "int64",
-            id: 21
+            id: 31
           }
         }
       },
@@ -2043,6 +2042,13 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "string",
             id: 2
           },
+          id: {
+            type: "string",
+            id: 10,
+            options: {
+              "(go.field).name": "ID"
+            }
+          },
           text: {
             type: "string",
             id: 11
@@ -2063,9 +2069,13 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "string",
             id: 1
           },
-          member: {
+          user: {
             type: "string",
             id: 2
+          },
+          update: {
+            type: "bool",
+            id: 5
           }
         }
       },
@@ -2075,6 +2085,46 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             rule: "repeated",
             type: "Message",
             id: 1
+          }
+        }
+      },
+      RelayRequest: {
+        fields: {
+          keys: {
+            rule: "repeated",
+            type: "string",
+            id: 1
+          }
+        }
+      },
+      RelayType: {
+        options: {
+          "(go.enum).name": "RelayType"
+        },
+        values: {
+          RELAY_UNSPECIFIED: 0,
+          RELAY_HELLO: 1,
+          RELAY_CHANNEL_CREATED: 10,
+          RELAY_CHANNEL_MESSAGE: 20
+        }
+      },
+      RelayOutput: {
+        fields: {
+          type: {
+            type: "RelayType",
+            id: 1
+          },
+          channel: {
+            type: "string",
+            id: 2
+          },
+          user: {
+            type: "string",
+            id: 3
+          },
+          index: {
+            type: "int64",
+            id: 4
           }
         }
       },
@@ -2098,12 +2148,16 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           updatedAt: {
             type: "int64",
             id: 4
+          },
+          index: {
+            type: "int64",
+            id: 5
           }
         }
       },
       ChannelsRequest: {
         fields: {
-          inbox: {
+          user: {
             type: "string",
             id: 1
           }
@@ -2124,7 +2178,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "string",
             id: 1
           },
-          inbox: {
+          user: {
             type: "string",
             id: 2
           }
@@ -2137,41 +2191,6 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             id: 1
           }
         }
-      },
-      ChannelInvitesCreateRequest: {
-        fields: {
-          channel: {
-            type: "string",
-            id: 1
-          },
-          sender: {
-            type: "string",
-            id: 2
-          },
-          recipients: {
-            rule: "repeated",
-            type: "string",
-            id: 3
-          }
-        }
-      },
-      ChannelInvitesCreateResponse: {
-        fields: {}
-      },
-      ChannelInviteAcceptRequest: {
-        fields: {
-          channel: {
-            type: "string",
-            id: 1
-          },
-          inbox: {
-            type: "string",
-            id: 2
-          }
-        }
-      },
-      ChannelInviteAcceptResponse: {
-        fields: {}
       },
       AdminSignURLRequest: {
         fields: {
@@ -2324,20 +2343,6 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
       ConfigSetResponse: {
         fields: {}
       },
-      RelayInput: {
-        fields: {}
-      },
-      RelayOutput: {
-        fields: {
-          kid: {
-            type: "string",
-            id: 1,
-            options: {
-              "(go.field).name": "KID"
-            }
-          }
-        }
-      },
       WormholeInput: {
         fields: {
           sender: {
@@ -2396,8 +2401,8 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "Key",
             id: 3
           },
-          type: {
-            type: "WormholeMessageType",
+          status: {
+            type: "WormholeMessageStatus",
             id: 5
           },
           text: {
@@ -2422,9 +2427,9 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           }
         }
       },
-      WormholeMessageType: {
+      WormholeMessageStatus: {
         options: {
-          "(go.enum).name": "WormholeMessageType"
+          "(go.enum).name": "WormholeMessageStatus"
         },
         values: {
           WORMHOLE_MESSAGE_SENT: 0,

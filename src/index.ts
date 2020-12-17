@@ -8,7 +8,7 @@ import fido2Proto from './fido2.proto'
 // TODO: Ask @grpc/proto-loader to export createPackageDefinition
 import {createPackageDefinition} from './proto-loader'
 
-import {ClientDuplexStream} from '@grpc/grpc-js/build/src/call'
+import {ClientReadableStream, ClientDuplexStream} from '@grpc/grpc-js/build/src/call'
 import {appDir, certPath} from './env'
 
 import {
@@ -106,6 +106,7 @@ export {
   FIDO2Service,
   ServiceClient,
   ClientDuplexStream,
+  ClientReadableStream,
   RPCError,
   appDir,
   certPath,
