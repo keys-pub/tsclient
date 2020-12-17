@@ -11,7 +11,7 @@ export const creds: Credentials = new Credentials(certPath())
 export const keys: KeysService = keysService('localhost:22405', creds)
 
 // Authenticate with service
-const auth = await keys.AuthUnlock({
+const auth = await keys.authUnlock({
   secret: 'mypassword',
   type: AuthType.PASSWORD_AUTH,
   client: 'myapp',
@@ -20,7 +20,7 @@ const auth = await keys.AuthUnlock({
 creds.token = auth.authToken
 
 // Search
-const search = await keys.Search({})
+const search = await keys.search({})
 console.log('Search:', search)
 ```
 
