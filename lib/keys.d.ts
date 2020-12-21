@@ -54,12 +54,6 @@ export declare enum MessageStatus {
     MESSAGE_SENT = "MESSAGE_SENT",
     MESSAGE_PENDING = "MESSAGE_PENDING"
 }
-export declare enum RelayType {
-    RELAY_UNSPECIFIED = "RELAY_UNSPECIFIED",
-    RELAY_HELLO = "RELAY_HELLO",
-    RELAY_CHANNEL_CREATED = "RELAY_CHANNEL_CREATED",
-    RELAY_CHANNEL_MESSAGE = "RELAY_CHANNEL_MESSAGE"
-}
 export declare enum WormholeStatus {
     WORMHOLE_DEFAULT = "WORMHOLE_DEFAULT",
     WORMHOLE_STARTING = "WORMHOLE_STARTING",
@@ -517,6 +511,7 @@ export interface User {
     status?: UserStatus;
     verifiedAt?: number;
     timestamp?: number;
+    proxied?: boolean;
     err?: string;
 }
 export interface UserRequest {
@@ -599,7 +594,6 @@ export interface RelayRequest {
     keys?: Array<string>;
 }
 export interface RelayOutput {
-    type?: RelayType;
     channel?: string;
     user?: string;
     index?: number;

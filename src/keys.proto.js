@@ -1853,6 +1853,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "int64",
             id: 12
           },
+          proxied: {
+            type: "bool",
+            id: 13
+          },
           err: {
             type: "string",
             id: 20
@@ -2097,34 +2101,19 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           }
         }
       },
-      RelayType: {
-        options: {
-          "(go.enum).name": "RelayType"
-        },
-        values: {
-          RELAY_UNSPECIFIED: 0,
-          RELAY_HELLO: 1,
-          RELAY_CHANNEL_CREATED: 10,
-          RELAY_CHANNEL_MESSAGE: 20
-        }
-      },
       RelayOutput: {
         fields: {
-          type: {
-            type: "RelayType",
-            id: 1
-          },
           channel: {
             type: "string",
-            id: 2
+            id: 1
           },
           user: {
             type: "string",
-            id: 3
+            id: 2
           },
           index: {
             type: "int64",
-            id: 4
+            id: 3
           }
         }
       },
