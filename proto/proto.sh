@@ -14,7 +14,7 @@ bin="$dir/../node_modules/.bin"
 # $bin/pbts -o ../lib/fido2.d.ts ../lib/fido2.js
 
 echo "pbjs"
-$bin/pbjs -t json-module --es6 -w es6 -o ../src/keys.proto.js keys.proto 
+$bin/pbjs -t json-module --es6 -w es6 -o ../src/rpc.proto.js rpc.proto 
 $bin/pbjs -t json-module --es6 -w es6 -o ../src/fido2.proto.js fido2.proto
 
 protoc_include="-I . \
@@ -42,7 +42,7 @@ if [ ! -x "$(command -v protoc-gen-tsrpc)" ]; then
 fi
 
 tsrpc_path=`go env GOPATH`/bin/protoc-gen-tsrpc
-for proto in keys.proto fido2.proto
+for proto in rpc.proto fido2.proto
 do
 protoc \
   $protoc_include \

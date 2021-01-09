@@ -5,13 +5,13 @@ yarn add @keys-pub/tsclient
 ```
 
 ```typescript
-import {Credentials, keysService, KeysService, certPath, RPCError} from '@keys-pub/tsclient'
+import {Credentials, rpcService, RPCService, certPath, RPCError} from '@keys-pub/tsclient'
 
 export const creds: Credentials = new Credentials(certPath())
-export const keys: KeysService = keysService('localhost:22405', creds)
+export const rpc: RPCService = rpcService('localhost:22405', creds)
 
 // Authenticate with service
-const auth = await keys.authUnlock({
+const auth = await rpc.authUnlock({
   secret: 'mypassword',
   type: AuthType.PASSWORD_AUTH,
   client: 'myapp',
@@ -20,7 +20,7 @@ const auth = await keys.authUnlock({
 creds.token = auth.authToken
 
 // Search
-const search = await keys.search({})
+const search = await rpc.search({})
 console.log('Search:', search)
 ```
 

@@ -2,7 +2,7 @@ import * as grpc from '@grpc/grpc-js'
 
 import * as fs from 'fs'
 
-import keysProto from './keys.proto'
+import rpcProto from './rpc.proto'
 import fido2Proto from './fido2.proto'
 
 // TODO: Ask @grpc/proto-loader to export createPackageDefinition
@@ -21,7 +21,7 @@ import {
 
 import {rpc, Message, Method, Root, RPCImpl, RPCImplCallback} from 'protobufjs'
 
-import {KeysService, RPCError} from './keys.service'
+import {RPCService, RPCError} from './rpc.service'
 import {FIDO2Service} from './fido2.service'
 
 class Credentials {
@@ -72,17 +72,17 @@ const newClient = (
   return serviceCls
 }
 
-const keysService = (addr: string, creds: Credentials): KeysService => {
-  const packageDefinition: PackageDefinition = createPackageDefinition(keysProto as Root, {
+const rpcService = (addr: string, creds: Credentials): RPCService => {
+  const packageDefinition: PackageDefinition = createPackageDefinition(rpcProto as Root, {
     arrays: true,
     enums: String,
     defaults: true,
   })
   const client = (): ServiceClient => {
-    const serviceCls = newClient(packageDefinition, 'keys', 'Keys')
+    const serviceCls = newClient(packageDefinition, 'service', 'RPC')
     return new serviceCls(addr, creds.grpc())
   }
-  return new KeysService(client)
+  return new RPCService(client)
 }
 
 const fido2Service = (addr: string, creds: Credentials): FIDO2Service => {
@@ -100,9 +100,9 @@ const fido2Service = (addr: string, creds: Credentials): FIDO2Service => {
 
 export {
   Credentials,
-  keysService,
+  rpcService,
   fido2Service,
-  KeysService,
+  RPCService,
   FIDO2Service,
   ServiceClient,
   ClientDuplexStream,

@@ -3,12 +3,12 @@ import * as $protobuf from "protobufjs/light";
 
 const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $protobuf.Root()))
 .addJSON({
-  keys: {
+  service: {
     options: {
       go_package: ".;service"
     },
     nested: {
-      Keys: {
+      RPC: {
         methods: {
           KeyGenerate: {
             requestType: "KeyGenerateRequest",
@@ -289,6 +289,26 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           ChannelCreate: {
             requestType: "ChannelCreateRequest",
             responseType: "ChannelCreateResponse"
+          },
+          ChannelInvite: {
+            requestType: "ChannelInviteRequest",
+            responseType: "ChannelInviteResponse"
+          },
+          ChannelLeave: {
+            requestType: "ChannelLeaveRequest",
+            responseType: "ChannelLeaveResponse"
+          },
+          ChannelRead: {
+            requestType: "ChannelReadRequest",
+            responseType: "ChannelReadResponse"
+          },
+          Follow: {
+            requestType: "FollowRequest",
+            responseType: "FollowResponse"
+          },
+          Follows: {
+            requestType: "FollowsRequest",
+            responseType: "FollowsResponse"
           },
           MessagePrepare: {
             requestType: "MessagePrepareRequest",
@@ -1266,8 +1286,7 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
         },
         values: {
           DEFAULT_EXPORT_TYPE: 0,
-          SALTPACK_EXPORT_TYPE: 1,
-          SSH_EXPORT_TYPE: 2
+          SSH_EXPORT_TYPE: 1
         }
       },
       KeyExportRequest: {
@@ -1314,6 +1333,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           password: {
             type: "string",
             id: 2
+          },
+          update: {
+            type: "bool",
+            id: 3
           }
         }
       },
@@ -1981,7 +2004,8 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
         },
         values: {
           MESSAGE_SENT: 0,
-          MESSAGE_PENDING: 1
+          MESSAGE_PENDING: 1,
+          MESSAGE_ERROR: 2
         }
       },
       Message: {
@@ -2073,10 +2097,6 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "string",
             id: 1
           },
-          user: {
-            type: "string",
-            id: 2
-          },
           update: {
             type: "bool",
             id: 5
@@ -2098,6 +2118,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             rule: "repeated",
             type: "string",
             id: 1
+          },
+          user: {
+            type: "string",
+            id: 2
           }
         }
       },
@@ -2141,6 +2165,10 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
           index: {
             type: "int64",
             id: 5
+          },
+          readIndex: {
+            type: "int64",
+            id: 10
           }
         }
       },
@@ -2177,6 +2205,110 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
         fields: {
           channel: {
             type: "Channel",
+            id: 1
+          }
+        }
+      },
+      ChannelLeaveRequest: {
+        fields: {
+          channel: {
+            type: "string",
+            id: 1
+          }
+        }
+      },
+      ChannelLeaveResponse: {
+        fields: {}
+      },
+      ChannelReadRequest: {
+        fields: {
+          channel: {
+            type: "string",
+            id: 1
+          },
+          index: {
+            type: "int64",
+            id: 2
+          }
+        }
+      },
+      ChannelReadResponse: {
+        fields: {}
+      },
+      ChannelInviteRequest: {
+        fields: {
+          channel: {
+            type: "string",
+            id: 1
+          },
+          recipients: {
+            rule: "repeated",
+            type: "string",
+            id: 2
+          },
+          sender: {
+            type: "string",
+            id: 3
+          }
+        }
+      },
+      ChannelInviteResponse: {
+        fields: {
+          message: {
+            type: "Message",
+            id: 1
+          }
+        }
+      },
+      Follow: {
+        fields: {
+          recipient: {
+            type: "string",
+            id: 1
+          },
+          sender: {
+            type: "string",
+            id: 2
+          }
+        }
+      },
+      FollowRequest: {
+        fields: {
+          recipient: {
+            type: "string",
+            id: 1
+          },
+          sender: {
+            type: "string",
+            id: 2
+          }
+        }
+      },
+      FollowResponse: {
+        fields: {
+          follow: {
+            type: "Follow",
+            id: 1
+          }
+        }
+      },
+      FollowsRequest: {
+        fields: {
+          recipient: {
+            type: "string",
+            id: 1
+          },
+          update: {
+            type: "bool",
+            id: 2
+          }
+        }
+      },
+      FollowsResponse: {
+        fields: {
+          follows: {
+            rule: "repeated",
+            type: "Follow",
             id: 1
           }
         }
