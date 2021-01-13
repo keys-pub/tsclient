@@ -7,7 +7,7 @@ yarn add @keys-pub/tsclient
 ```typescript
 import {Credentials, rpcService, RPCService, certPath, RPCError} from '@keys-pub/tsclient'
 
-export const creds: Credentials = new Credentials(certPath())
+export const creds: Credentials = new Credentials(certPath('MyApp'))
 export const rpc: RPCService = rpcService('localhost:22405', creds)
 
 // Authenticate with service

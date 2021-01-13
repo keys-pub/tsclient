@@ -1,12 +1,5 @@
 import * as os from 'os'
-import * as getenv from 'getenv'
 import * as path from 'path'
-
-export const defaultAppName = 'Keys'
-
-export const getAppName = (): string => {
-  return getenv.string('KEYS_APP', defaultAppName)
-}
 
 const platform = (): NodeJS.Platform => {
   let platform = os.platform()
@@ -16,8 +9,7 @@ const platform = (): NodeJS.Platform => {
   return platform
 }
 
-export const appDir = (): string => {
-  const appName = getAppName()
+export const appDir = (appName: string): string => {
   let supportDir
   const plt = platform()
   switch (plt) {
@@ -48,6 +40,6 @@ export const appDir = (): string => {
   return path.join(supportDir, appName)
 }
 
-export const certPath = (): string => {
-  return path.join(appDir(), 'ca.pem')
+export const certPath = (appName: string): string => {
+  return path.join(appDir(appName), 'ca.pem')
 }
