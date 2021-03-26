@@ -456,11 +456,12 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "bytes",
             id: 3
           },
-          credentialId: {
+          credentialIds: {
+            rule: "repeated",
             type: "bytes",
             id: 4,
             options: {
-              "(go.field).name": "CredentialID"
+              "(go.field).name": "CredentialIDs"
             }
           },
           pin: {
@@ -666,11 +667,12 @@ const $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $
             type: "bytes",
             id: 11
           },
-          credentialId: {
+          credentialIds: {
+            rule: "repeated",
             type: "bytes",
             id: 12,
             options: {
-              "(go.field).name": "CredentialID"
+              "(go.field).name": "CredentialIDs"
             }
           },
           salt: {

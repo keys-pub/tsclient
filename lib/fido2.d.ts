@@ -113,7 +113,7 @@ export interface AssertionRequest {
     device?: string;
     rpId?: string;
     clientDataHash?: Uint8Array;
-    credentialId?: Uint8Array;
+    credentialIds?: Array<Uint8Array>;
     pin?: string;
     extensions?: Array<string>;
     uv?: string;
@@ -161,7 +161,7 @@ export interface HMACSecretRequest {
     pin?: string;
     rpId?: string;
     clientDataHash?: Uint8Array;
-    credentialId?: Uint8Array;
+    credentialIds?: Array<Uint8Array>;
     salt?: Uint8Array;
 }
 export interface HMACSecretResponse {
